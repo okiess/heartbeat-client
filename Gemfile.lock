@@ -1,6 +1,7 @@
 GEM
   remote: http://rubygems.org/
   specs:
+    daemons (1.1.4)
     git (1.2.5)
     httparty (0.8.1)
       multi_json
@@ -20,6 +21,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.0.0)
+  daemons
   httparty
   jeweler (~> 1.5.2)
   rcov
