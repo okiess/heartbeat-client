@@ -2,7 +2,7 @@ require 'rubygems'
 gem 'httparty'
 require 'httparty'
 require 'logger'
-require "sys/cpu"
+require "sys/cpu" rescue nil
 require 'pp'
 
 class Heartbeat
