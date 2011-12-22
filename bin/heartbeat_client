@@ -1,2 +1,0 @@
-#!/bin/bash
-ruby `dirname "$0"`/../lib/heartbeat_proc.rb $1
