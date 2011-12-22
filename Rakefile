@@ -19,12 +19,8 @@ Jeweler::Tasks.new do |gem|
   gem.description = "Heartbeat Client in Ruby"
   gem.email = "kiessler@inceedo.com"
   gem.authors = ["Oliver Kiessler"]
-  # Include your dependencies below. Runtime dependencies are required when using your gem,
-  # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
   gem.add_runtime_dependency 'daemons'
-  # gem.add_runtime_dependency 'sys-cpu'
   gem.add_runtime_dependency 'httparty'
-  #  gem.add_development_dependency 'rspec', '> 1.2.3'
 end
 Jeweler::RubygemsDotOrgTasks.new
 

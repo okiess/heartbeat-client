@@ -2,11 +2,9 @@ require 'rubygems'
 gem 'httparty'
 require 'httparty'
 require 'logger'
-require "sys/cpu" rescue nil
 require 'pp'
 
 class Heartbeat
-  include Sys
   include HTTParty
   base_uri 'http://heartbeat-server.herokuapp.com'
 
@@ -25,9 +23,7 @@ class Heartbeat
   def self.create(apikey)
     cpu = 0; load_average = 0; memory_used = 0; memory_free = 0
 
-    if self.is_mac?
-      load_average = CPU.load_avg.first
-    elsif self.is_linux?
+    if self.is_linux?
       cpus = `iostat -c`.split
       cpu = 100 - cpus.last.to_i
     end
