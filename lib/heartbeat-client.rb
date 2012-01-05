@@ -73,7 +73,7 @@ class Heartbeat
       #puts cpu_usage.inspect
       #puts processes.inspect
 
-      pp Heartbeat.post('/heartbeat', options)
+      Heartbeat.post('/heartbeat', options)
     else
       put "No top output found."
     end
@@ -95,11 +95,7 @@ class Heartbeat
   end
 
   def self.load_averages(load_avg, str)
-    if is_linux?
-      avg = str.split('load average:')
-    else
-      avg = str.split(':')
-    end
+    avg = str.split(is_linux? ? 'load average:' : ':')
     if avg and avg[0]
       avg[1].split(',').each do |a|
         load_avg << a.strip.to_f
@@ -111,15 +107,9 @@ class Heartbeat
     cpu = str.split(':')
     if cpu and cpu[0]
       cpu[1].split(',').each do |cp|
-        if is_linux?
-          cpu_usage['us'] = cp.split(' ')[0].strip.to_f if cp.include?('us')
-          cpu_usage['sy'] = cp.split(' ')[0].strip.to_f if cp.include?('sy')
-          cpu_usage['id'] = cp.split(' ')[0].strip.to_f if cp.include?('id')
-        else
-          cpu_usage['user'] = cp.split(' ')[0].strip.to_f if cp.include?('user')
-          cpu_usage['sys'] = cp.split(' ')[0].strip.to_f if cp.include?('sys')
-          cpu_usage['idle'] = cp.split(' ')[0].strip.to_f if cp.include?('idle')
-        end
+        cpu_usage['user'] = cp.split(' ')[0].strip.to_f if cp.include?(is_linux? ? 'us' : 'user')
+        cpu_usage['sys'] = cp.split(' ')[0].strip.to_f if cp.include?(is_linux? ? 'sy' : 'sys')
+        cpu_usage['idle'] = cp.split(' ')[0].strip.to_f if cp.include?(is_linux? ? 'id' : 'idle')
       end
     end
   end
@@ -127,11 +117,7 @@ class Heartbeat
   def self.process(processes, line)
     procs = line.split(' ')
     if procs and procs.size > 0
-      if is_linux?
-        processes << {'pid' => procs[0].strip.to_i, 'command' => procs[11].strip, 'cpu' => procs[8].strip.to_f} # debian
-      else
-        processes << {'pid' => procs[0].strip.to_i, 'command' => procs[1].strip, 'cpu' => procs[2].strip.to_f}
-      end
+      processes << (is_linux? ? procs[11].strip : procs[1].strip)
     end
   end
 end
