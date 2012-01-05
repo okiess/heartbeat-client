@@ -1,7 +1,9 @@
+#!/usr/bin/env ruby
+
 require 'rubygems'
 require 'daemons'
 require 'logger'
-require File.dirname(__FILE__) + '/heartbeat-client'
+require File.dirname(__FILE__) + '/../lib/heartbeat-client'
 
 begin
   puts "Using config in your home directory"
@@ -15,9 +17,13 @@ unless @config['apikey']
   exit
 end
 
-Daemons.run_proc('heartbeat-client.rb') do
-  loop do
-    Heartbeat.create(@config['apikey'])
-    sleep(30)
+if ARGV and ARGV.size == 1
+  Daemons.run_proc('heartbeat-client.rb') do
+    loop do
+      Heartbeat.create(@config['apikey'])
+      sleep(30)
+    end
   end
+else
+  puts "Please provide a command to hbc (start|stop|run)!"
 end
