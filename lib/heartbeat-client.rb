@@ -89,12 +89,13 @@ class Heartbeat
         }
       }
 
-      puts procs.inspect
-      puts load_avg.inspect
-      puts cpu_usage.inspect
-      puts processes.inspect
-      puts memory.inspect
-      puts disks.inspect
+      #puts procs.inspect
+      #puts load_avg.inspect
+      #puts cpu_usage.inspect
+      #puts processes.inspect
+      #puts memory.inspect
+      #puts disks.inspect
+      #puts swap.inspect
 
       Heartbeat.post('/heartbeat', options)
     else
