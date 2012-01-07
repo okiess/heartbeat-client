@@ -25,12 +25,17 @@ class Heartbeat
     load_avg = []
     cpu_usage = {'user' => 0, 'sys' => 0, 'idle' => 0}
     processes = []
+    memory = {'free' => 0, 'used' => 0}
+    disks = {}
+    swap = {'free' => 0, 'used' => 0}
 
     if is_linux?
       `top -b -n1 > /tmp/top.out`
     else
       `top -l 1 > /tmp/top.out`
     end
+
+    `df -m > /tmp/dfm.out`
 
     if File.exists?('/tmp/top.out')
       counter = 0; proc_count = 0
@@ -40,15 +45,28 @@ class Heartbeat
             processes(procs, line) if line.include?('Task')
             load_averages(load_avg, line) if line.include?('load average')
             cpu_usages(cpu_usage, line) if line.include?('Cpu')
+            memory_usage(memory, line) if line.include?('Mem')
+            swap_usage(swap, line) if line.include?('Swap')
             proc_count = counter + 1 if line.include?('PID') and line.include?('COMMAND')
           else
             processes(procs, line) if line.include?('Processes')
             load_averages(load_avg, line) if line.include?('Load Avg')
             cpu_usages(cpu_usage, line) if line.include?('CPU usage')
+            memory_usage(memory, line) if line.include?('PhysMem')
             proc_count = counter + 1 if line.include?('PID') and line.include?('COMMAND')
           end
           process(processes, line) if proc_count > 0 and counter >= proc_count
           counter += 1
+        end
+      end
+      
+      if File.exists?('/tmp/dfm.out')
+        File.open("/tmp/dfm.out", "r") do |infile|
+          counter = 0
+          while (line = infile.gets)
+            disk_usage(disks, line) if counter > 0
+            counter += 1
+          end
         end
       end
 
@@ -62,16 +80,21 @@ class Heartbeat
               :process_stats => procs,
               :load_avg => load_avg,
               :cpu_usage => cpu_usage,
-              :processes => processes
+              :processes => processes,
+              :memory => memory,
+              :disks => disks,
+              :swap => swap
             }
           }
         }
       }
 
-      #puts procs.inspect
-      #puts load_avg.inspect
-      #puts cpu_usage.inspect
-      #puts processes.inspect
+      puts procs.inspect
+      puts load_avg.inspect
+      puts cpu_usage.inspect
+      puts processes.inspect
+      puts memory.inspect
+      puts disks.inspect
 
       Heartbeat.post('/heartbeat', options)
     else
@@ -114,10 +137,35 @@ class Heartbeat
     end
   end
 
-  def self.process(processes, line)
-    procs = line.split(' ')
+  def self.process(processes, str)
+    procs = str.split(' ')
     if procs and procs.size > 0
       processes << (is_linux? ? procs[11].strip : procs[1].strip)
     end
+  end
+  
+  def self.memory_usage(memory, str)
+    mem = str.split(':')
+    if mem and mem[0]
+      mem[1].split(',').each do |m|
+        memory['free'] = m.split(' ')[0].strip if m.include?('free')
+        memory['used'] = m.split(' ')[0].strip if m.include?('used')
+      end
+    end
+  end
+
+  def self.swap_usage(swap, str)
+    sw = str.split(':')
+    if sw and sw[0]
+      sw[1].split(',').each do |s|
+        swap['free'] = s.split(' ')[0].strip if s.include?('free')
+        swap['used'] = s.split(' ')[0].strip if s.include?('used')
+      end
+    end
+  end
+  
+  def self.disk_usage(disks, str)
+    ds = str.split(' ')
+    disks[ds[0].strip] = {'used' => ds[2].strip, 'available' => ds[3].strip}
   end
 end

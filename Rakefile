@@ -21,6 +21,8 @@ Jeweler::Tasks.new do |gem|
   gem.authors = ["Oliver Kiessler"]
   gem.add_runtime_dependency 'daemons'
   gem.add_runtime_dependency 'httparty'
+  gem.add_runtime_dependency 'json'
+  gem.add_runtime_dependency 'foreman'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
