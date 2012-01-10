@@ -2,7 +2,6 @@ require 'rubygems'
 gem 'httparty'
 require 'httparty'
 require 'logger'
-require 'pp'
 
 class Heartbeat
   include HTTParty
@@ -20,7 +19,7 @@ class Heartbeat
     Logger.new('/tmp/heartbeat.log')
   end
   
-  def self.create(apikey)
+  def self.create(apikey, name = nil)
     procs = {'total' => 0, 'running' => 0, 'stuck' => 0, 'sleeping' => 0, 'threads' => 0, 'stopped' => 0, 'zombie' => 0}
     load_avg = []
     cpu_usage = {'user' => 0, 'sys' => 0, 'idle' => 0}
@@ -75,6 +74,7 @@ class Heartbeat
           :heartbeat => {
             :apikey => apikey,
             :host => `hostname`.chomp,
+            :name => name,
             :timestamp => Time.now.to_i,
             :values => {
               :process_stats => procs,
