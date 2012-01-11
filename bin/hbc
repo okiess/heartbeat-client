@@ -20,7 +20,7 @@ end
 if ARGV and ARGV.size == 1
   Daemons.run_proc('heartbeat-client.rb') do
     loop do
-      Heartbeat.create(@config['apikey'], @config['name'])
+      Heartbeat.create(@config['apikey'], @config['endpoint'], @config['name'])
       sleep(30)
     end
   end

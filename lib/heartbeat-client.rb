@@ -5,7 +5,6 @@ require 'logger'
 
 class Heartbeat
   include HTTParty
-  base_uri 'http://heartbeat-server.herokuapp.com'
 
   def self.is_mac?
     RUBY_PLATFORM.downcase.include?("darwin")
@@ -19,7 +18,7 @@ class Heartbeat
     Logger.new('/tmp/heartbeat.log')
   end
   
-  def self.create(apikey, name = nil)
+  def self.create(apikey, endpoint, name = nil)
     procs = {'total' => 0, 'running' => 0, 'stuck' => 0, 'sleeping' => 0, 'threads' => 0, 'stopped' => 0, 'zombie' => 0}
     load_avg = []
     cpu_usage = {'user' => 0, 'sys' => 0, 'idle' => 0}
@@ -89,15 +88,7 @@ class Heartbeat
         }
       }
 
-      #puts procs.inspect
-      #puts load_avg.inspect
-      #puts cpu_usage.inspect
-      #puts processes.inspect
-      #puts memory.inspect
-      #puts disks.inspect
-      #puts swap.inspect
-
-      Heartbeat.post('/heartbeat', options)
+      Heartbeat.post(endpoint + '/heartbeat', options)
     else
       put "No top output found."
     end
