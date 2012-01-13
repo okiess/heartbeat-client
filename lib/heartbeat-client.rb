@@ -2,6 +2,7 @@ require 'rubygems'
 gem 'httparty'
 require 'httparty'
 require 'logger'
+require 'macaddr'
 
 class Heartbeat
   include HTTParty
@@ -81,6 +82,7 @@ class Heartbeat
           :heartbeat => {
             :apikey => apikey,
             :host => `hostname`.chomp,
+            :macaddr => Mac.addr,
             :name => name,
             :timestamp => Time.now.to_i,
             :values => {

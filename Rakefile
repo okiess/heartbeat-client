@@ -23,6 +23,7 @@ Jeweler::Tasks.new do |gem|
   gem.add_runtime_dependency 'httparty'
   gem.add_runtime_dependency 'json'
   gem.add_runtime_dependency 'foreman'
+  gem.add_runtime_dependency 'macaddr'
 end
 Jeweler::RubygemsDotOrgTasks.new
 

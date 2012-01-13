@@ -2,6 +2,7 @@ source "http://rubygems.org"
 gem 'httparty'
 gem 'daemons'
 gem 'foreman'
+gem 'macaddr'
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
