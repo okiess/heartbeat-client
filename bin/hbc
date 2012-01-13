@@ -17,10 +17,22 @@ unless @config['apikey']
   exit
 end
 
+unless @config['endpoint']
+  puts "Service Endpoint not found!"
+  exit
+end
+
 if ARGV and ARGV.size == 1
-  Daemons.run_proc('heartbeat-client.rb') do
+  Daemons.run_proc('heartbeat-client.rb', :dir => File.join('/tmp'), :monitor => true,
+    :backtrace => true, :monitor => true) do
+    Heartbeat.log = Logger.new('/tmp/heartbeat.log')
     loop do
-      Heartbeat.create(@config['apikey'], @config['endpoint'], @config['name'])
+      begin
+        Heartbeat.create(@config['apikey'], @config['endpoint'], @config['name'])
+      rescue => e
+        puts e.message
+      end
+      GC.start
       sleep(30)
     end
   end

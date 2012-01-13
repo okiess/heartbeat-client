@@ -14,11 +14,17 @@ class Heartbeat
     RUBY_PLATFORM.downcase.include?("linux")
   end
   
-  def self.log
-    Logger.new('/tmp/heartbeat.log')
+  def self.log=(logger)
+    @@log = logger
   end
-  
+
+  def self.log
+    @@log
+  end
+
   def self.create(apikey, endpoint, name = nil)
+    log.info("#create - Collecting data...")
+    
     procs = {'total' => 0, 'running' => 0, 'stuck' => 0, 'sleeping' => 0, 'threads' => 0, 'stopped' => 0, 'zombie' => 0}
     load_avg = []
     cpu_usage = {'user' => 0, 'sys' => 0, 'idle' => 0}
@@ -26,13 +32,15 @@ class Heartbeat
     memory = {'free' => 0, 'used' => 0}
     disks = {}
     swap = {'free' => 0, 'used' => 0}
-
+  
+    log.debug("Dumping top output...")
     if is_linux?
       `top -b -n1 > /tmp/top.out`
     else
       `top -l 1 > /tmp/top.out`
     end
-
+    
+    log.debug("Dumping df output...")
     `df -m > /tmp/dfm.out`
 
     if File.exists?('/tmp/top.out')
@@ -87,10 +95,13 @@ class Heartbeat
           }
         }
       }
-
-      Heartbeat.post(endpoint + '/heartbeat', options)
+      
+      log.info("#create - Sending data to endpoint...")
+      res = Heartbeat.post(endpoint + '/heartbeat', options)
+      log.debug("Response: #{res.response.inspect}") if res
+      log.info("Finished iteration.")
     else
-      put "No top output found."
+      log.error "No top output found."
     end
   end
 
