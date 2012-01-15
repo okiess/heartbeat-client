@@ -3,6 +3,8 @@ gem 'httparty'
 require 'httparty'
 require 'logger'
 require 'macaddr'
+require 'net/http'
+require 'json'
 
 class Heartbeat
   include HTTParty
@@ -30,6 +32,7 @@ class Heartbeat
     endpoint = config['endpoint']
     name = config['name']
     apache_status = config['apache_status']
+    mongodb_status = config['mongodb_status']
 
     procs = {'total' => 0, 'running' => 0, 'stuck' => 0, 'sleeping' => 0, 'threads' => 0, 'stopped' => 0, 'zombie' => 0}
     load_avg = []
@@ -39,6 +42,7 @@ class Heartbeat
     disks = {}
     swap = {'free' => 0, 'used' => 0}
     apache = {}
+    mongodb = {}
   
     log.debug("Dumping top output...")
     if is_linux?
@@ -51,6 +55,7 @@ class Heartbeat
     `df -m > /tmp/dfm.out`
 
     if apache_status
+      log.debug("Dumping apache status output...")
       `curl #{apache_status} > /tmp/apache.out`  
     end
 
@@ -97,6 +102,10 @@ class Heartbeat
         end
       end
 
+      if mongodb_status
+        mongodb_server_status(mongodb_status, mongodb)
+      end
+
       options = {
         :body => {
           :heartbeat => {
@@ -113,7 +122,8 @@ class Heartbeat
               :memory => memory,
               :disks => disks,
               :swap => swap,
-              :apache_status => apache
+              :apache_status => apache,
+              :mongodb_status => mongodb
             }
           }
         }
@@ -196,6 +206,20 @@ class Heartbeat
       apache['requests'] = ap[1].strip.to_f if ap[0].include?('ReqPerSec')
       apache['busy_workers'] = ap[1].strip.to_i if ap[0].include?('BusyWorkers')
       apache['idle_workers'] = ap[1].strip.to_i if ap[0].include?('IdleWorkers')
+    end
+  end
+
+  def self.mongodb_server_status(mongodb_url, mongodb)
+    res = Net::HTTP.get(URI.parse(mongodb_url))
+    json = JSON.parse(res)
+    if json
+      if json['connections']
+        mongodb['current_connections'] = json['connections']['current']
+        mongodb['available_connections'] = json['connections']['available']
+      end
+      mongodb['mem'] = json['mem'] if json['mem']
+      mongodb['indexCounters'] = json['indexCounters'] if json['indexCounters']
+      mongodb['opcounters'] = json['opcounters'] if json['opcounters']
     end
   end
 
