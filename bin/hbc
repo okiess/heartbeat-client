@@ -28,7 +28,7 @@ if ARGV and ARGV.size == 1
     Heartbeat.log = Logger.new('/tmp/heartbeat.log')
     loop do
       begin
-        Heartbeat.create(@config['apikey'], @config['endpoint'], @config['name'])
+        Heartbeat.create(@config)
       rescue => e
         puts e.message
       end
