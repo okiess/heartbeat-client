@@ -25,14 +25,14 @@ class Heartbeat
     @@log
   end
 
-  def self.create(config)
+  def self.create(config, version = '0.0')
     log.info("#create - Collecting data...")
     
     apikey = config['apikey']
     endpoint = config['endpoint']
     name = config['name']
     apache_status = config['apache_status']
-    mongodb_status = config['mongodb_status']
+    mongostat_arguments = config['mongostat_arguments']
 
     procs = {'total' => 0, 'running' => 0, 'stuck' => 0, 'sleeping' => 0, 'threads' => 0, 'stopped' => 0, 'zombie' => 0}
     load_avg = []
@@ -57,6 +57,11 @@ class Heartbeat
     if apache_status
       log.debug("Dumping apache status output...")
       `curl #{apache_status} > /tmp/apache.out`  
+    end
+
+    if mongostat_arguments
+      log.debug("Dumping mongostat output...")
+      `mongostat #{mongostat_arguments} > /tmp/mongodb.out`
     end
 
     if File.exists?('/tmp/top.out')
@@ -102,13 +107,20 @@ class Heartbeat
         end
       end
 
-      if mongodb_status
-        mongodb_server_status(mongodb_status, mongodb)
+      if File.exists?('/tmp/mongodb.out')
+        File.open("/tmp/mongodb.out", "r") do |infile|
+          counter = 0
+          while (line = infile.gets)
+            mongodb_status(mongodb, line) if counter == 2
+            counter += 1
+          end
+        end
       end
 
       options = {
         :body => {
           :heartbeat => {
+            :client_version => version,
             :apikey => apikey,
             :host => `hostname`.chomp,
             :macaddr => Mac.addr,
@@ -209,17 +221,23 @@ class Heartbeat
     end
   end
 
-  def self.mongodb_server_status(mongodb_url, mongodb)
-    res = Net::HTTP.get(URI.parse(mongodb_url))
-    json = JSON.parse(res)
-    if json
-      if json['connections']
-        mongodb['current_connections'] = json['connections']['current']
-        mongodb['available_connections'] = json['connections']['available']
+  def self.mongodb_status(mongodb, str)
+    if (mo = str.split(' '))
+      mo.each_with_index do |moa, index|
+        mongodb['insert'] = moa.strip.to_i if index == 0
+        mongodb['query'] = moa.strip.to_i if index == 1
+        mongodb['update'] = moa.strip.to_i if index == 2
+        mongodb['delete'] = moa.strip.to_i if index == 3
+        mongodb['getmore'] = moa.strip.to_i if index == 4
+        mongodb['command'] = moa.strip.to_i if index == 5
+        mongodb['flushes'] = moa.strip.to_i if index == 6
+        mongodb['mapped'] = moa.strip if index == 7
+        mongodb['vsize'] = moa.strip if index == 8
+        mongodb['res'] = moa.strip if index == 9
+        mongodb['netIn'] = moa.strip if index == 14
+        mongodb['netOut'] = moa.strip if index == 15
+        mongodb['conn'] = moa.strip if index == 16
       end
-      mongodb['mem'] = json['mem'] if json['mem']
-      mongodb['indexCounters'] = json['indexCounters'] if json['indexCounters']
-      mongodb['opcounters'] = json['opcounters'] if json['opcounters']
     end
   end
 

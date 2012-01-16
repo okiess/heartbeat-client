@@ -22,13 +22,22 @@ unless @config['endpoint']
   exit
 end
 
+version = "0.0"
+begin
+  file = File.open(File.dirname(__FILE__) + "/../VERSION", "rb")
+  version = file.read
+  puts "heartbeat-client #{version}"
+rescue => e
+  puts e.message
+end
+
 if ARGV and ARGV.size == 1
   Daemons.run_proc('heartbeat-client.rb', :dir => File.join('/tmp'), :monitor => true,
     :backtrace => true, :monitor => true) do
     Heartbeat.log = Logger.new('/tmp/heartbeat.log')
     loop do
       begin
-        Heartbeat.create(@config)
+        Heartbeat.create(@config, version)
       rescue => e
         puts e.message
       end
