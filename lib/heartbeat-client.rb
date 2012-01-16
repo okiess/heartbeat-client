@@ -109,11 +109,11 @@ class Heartbeat
 
       if File.exists?('/tmp/mongodb.out')
         File.open("/tmp/mongodb.out", "r") do |infile|
-          counter = 0
+          counter = 0; lines = []
           while (line = infile.gets)
-            mongodb_status(mongodb, line) if counter == 2
-            counter += 1
+            lines << line
           end
+          mongodb_status(mongodb, lines)
         end
       end
 
@@ -221,22 +221,25 @@ class Heartbeat
     end
   end
 
-  def self.mongodb_status(mongodb, str)
-    if (mo = str.split(' '))
-      mo.each_with_index do |moa, index|
-        mongodb['insert'] = moa.strip.to_i if index == 0
-        mongodb['query'] = moa.strip.to_i if index == 1
-        mongodb['update'] = moa.strip.to_i if index == 2
-        mongodb['delete'] = moa.strip.to_i if index == 3
-        mongodb['getmore'] = moa.strip.to_i if index == 4
-        mongodb['command'] = moa.strip.to_i if index == 5
-        mongodb['flushes'] = moa.strip.to_i if index == 6
-        mongodb['mapped'] = moa.strip if index == 7
-        mongodb['vsize'] = moa.strip if index == 8
-        mongodb['res'] = moa.strip if index == 9
-        mongodb['netIn'] = moa.strip if index == 14
-        mongodb['netOut'] = moa.strip if index == 15
-        mongodb['conn'] = moa.strip if index == 16
+  def self.mongodb_status(mongodb, lines)
+    if lines and lines.size == 3
+      header = lines[1].gsub('%', '').gsub('miss', '').split(' '); mo = lines[2].split(' ')
+      if header and mo and header.size == mo.size
+        header.each_with_index do |h, index|
+          mongodb['insert'] = mo[index].strip.to_i if h == 'insert'
+          mongodb['query'] = mo[index].to_i if h == 'query'
+          mongodb['update'] = mo[index].strip.to_i if h == 'update'
+          mongodb['delete'] = mo[index].strip.to_i if h == 'delete'
+          mongodb['getmore'] = mo[index].strip.to_i if h == 'getmore'
+          mongodb['command'] = mo[index].strip.to_i if h == 'command'
+          mongodb['flushes'] = mo[index].strip.to_i if h == 'flushes'
+          mongodb['mapped'] = mo[index].strip if h == 'mapped'
+          mongodb['vsize'] = mo[index].strip if h == 'vsize'
+          mongodb['res'] = mo[index].strip if h == 'res'
+          mongodb['netIn'] = mo[index].strip if h == 'netIn'
+          mongodb['netOut'] = mo[index].strip if h == 'netOut'
+          mongodb['conn'] = mo[index].strip if h == 'conn'
+        end
       end
     end
   end
