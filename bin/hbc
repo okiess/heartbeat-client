@@ -35,9 +35,12 @@ if ARGV and ARGV.size == 1
   Daemons.run_proc('heartbeat-client.rb', :dir => File.join('/tmp'), :monitor => true,
     :backtrace => true, :monitor => true) do
     Heartbeat.log = Logger.new('/tmp/heartbeat.log')
+    count = 0
     loop do
       begin
-        Heartbeat.create(@config, version)
+        Heartbeat.create(@config, version, (count == 2))
+        count += 1
+        count = 0 if count == 2
       rescue => e
         puts e.message
       end
