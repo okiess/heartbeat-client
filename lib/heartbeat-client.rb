@@ -5,6 +5,7 @@ require 'logger'
 require 'macaddr'
 require 'net/http'
 require 'json'
+require 'keen'
 
 class Heartbeat
   include HTTParty
@@ -33,6 +34,9 @@ class Heartbeat
     name = config['name']
     apache_status = config['apache_status']
     mongostat_arguments = config['mongostat_arguments']
+    keen_project_token = config['keen_project_token']
+    keen_api_key = config['keen_api_key']
+    keen_collection = config['keen_collection']
 
     if gather_metrics
       procs = {'total' => 0, 'running' => 0, 'stuck' => 0, 'sleeping' => 0, 'threads' => 0, 'stopped' => 0, 'zombie' => 0}
@@ -145,6 +149,12 @@ class Heartbeat
         log.info("#create - Sending data to endpoint (with metrics)...")
         res = Heartbeat.post(endpoint + '/heartbeat', options)
         log.debug("Response: #{res.response.inspect}") if res
+
+        if keen_project_token and keen_api_key and keen_collection
+          keen = Keen::Client.new(:project_id => keen_project_token, :api_key => keen_api_key)
+          data = options[:body][:heartbeat]
+          keen.publish(keen_collection, {:host => data[:host], :cpu => data[:values][:cpu_usage]})
+        end
       else
         log.error "No top output found."
       end
