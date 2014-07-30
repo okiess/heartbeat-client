@@ -19,11 +19,6 @@ Jeweler::Tasks.new do |gem|
   gem.description = "Heartbeat Client in Ruby"
   gem.email = "kiessler@inceedo.com"
   gem.authors = ["Oliver Kiessler"]
-  gem.add_runtime_dependency 'daemons'
-  gem.add_runtime_dependency 'httparty'
-  gem.add_runtime_dependency 'json'
-  gem.add_runtime_dependency 'foreman'
-  gem.add_runtime_dependency 'macaddr'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
@@ -33,13 +28,6 @@ Rake::TestTask.new(:test) do |test|
   test.pattern = 'test/**/test_*.rb'
   test.verbose = true
 end
-
-#require 'rcov/rcovtask'
-#Rcov::RcovTask.new do |test|
-#  test.libs << 'test'
-#  test.pattern = 'test/**/test_*.rb'
-#  test.verbose = true
-#end
 
 task :default => :test
 
