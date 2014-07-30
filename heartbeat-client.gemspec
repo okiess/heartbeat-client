@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "bin/hbc",
+    "heartbeat-client.gemspec",
     "heartbeat-client.yml.sample",
     "lib/heartbeat-client.rb",
     "test/helper.rb",
