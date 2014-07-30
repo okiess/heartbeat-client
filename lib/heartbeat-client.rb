@@ -37,6 +37,7 @@ class Heartbeat
     keen_project_token = config['keen_project_token']
     keen_api_key = config['keen_api_key']
     keen_collection = config['keen_collection']
+    docker_command = config['docker_command']
 
     if gather_metrics
       procs = {'total' => 0, 'running' => 0, 'stuck' => 0, 'sleeping' => 0, 'threads' => 0, 'stopped' => 0, 'zombie' => 0}
@@ -48,6 +49,7 @@ class Heartbeat
       swap = {'free' => 0, 'used' => 0}
       apache = {}
       mongodb = {}
+      docker_containers = []
 
       log.debug("Dumping top output...")
       if is_linux?
@@ -67,6 +69,11 @@ class Heartbeat
       if mongostat_arguments
         log.debug("Dumping mongostat output...")
         `mongostat #{mongostat_arguments} > /tmp/mongodb.out`
+      end
+      
+      if docker_command
+        log.debug("Dumping docker output...")
+        `#{docker_command} > /tmp/docker.out`
       end
 
       if File.exists?('/tmp/top.out')
@@ -121,6 +128,17 @@ class Heartbeat
             mongodb_status(mongodb, lines)
           end
         end
+        
+        if File.exists?('/tmp/docker.out')
+          File.open("/tmp/docker.out", "r") do |infile|
+            counter = 0; lines = []
+            while (line = infile.gets)
+              lines << line if counter > 0
+              counter += 1
+            end
+            docker(docker_containers, lines)
+          end
+        end
 
         options = {
           :body => {
@@ -140,7 +158,8 @@ class Heartbeat
                 :disks => disks,
                 :swap => swap,
                 :apache_status => apache,
-                :mongodb_status => mongodb
+                :mongodb_status => mongodb,
+                :docker_containers => docker_containers
               }
             }
           }
@@ -269,6 +288,18 @@ class Heartbeat
           mongodb['netOut'] = mo[index].strip if h == 'netOut'
           mongodb['conn'] = mo[index].strip if h == 'conn'
         end
+      end
+    end
+  end
+  
+  def self.docker(docker_containers, lines)
+    if lines and lines.size > 0
+      lines.each do |line|
+        container = {}
+        parts = line.split(" ")
+        container['name'] = parts[0]
+        container['image'] = parts[1]
+        docker_containers << container
       end
     end
   end
