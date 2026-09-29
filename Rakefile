@@ -9,19 +9,6 @@ rescue Bundler::BundlerError => e
 end
 require 'rake'
 
-require 'jeweler'
-Jeweler::Tasks.new do |gem|
-  # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "heartbeat-client"
-  gem.homepage = "http://github.com/okiess/heartbeat-client"
-  gem.license = "MIT"
-  gem.summary = "Heartbeat"
-  gem.description = "Heartbeat Client in Ruby"
-  gem.email = "kiessler@inceedo.com"
-  gem.authors = ["Oliver Kiessler"]
-end
-Jeweler::RubygemsDotOrgTasks.new
-
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
   test.libs << 'lib' << 'test'
@@ -32,7 +19,7 @@ end
 task :default => :test
 
 require 'rdoc/task'
-Rake::RDocTask.new do |rdoc|
+RDoc::Task.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
   rdoc.rdoc_dir = 'rdoc'

@@ -1,90 +1,132 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (3.2.12)
-      i18n (~> 0.6)
-      multi_json (~> 1.0)
-    addressable (2.3.6)
-    bourne (1.1.2)
-      mocha (= 0.10.5)
-    builder (3.2.2)
-    daemons (1.1.9)
-    docile (1.1.5)
-    faraday (0.8.9)
-      multipart-post (~> 1.2.0)
-    foreman (0.61.0)
-      thor (>= 0.13.6)
-    git (1.2.7)
-    github_api (0.10.1)
-      addressable
-      faraday (~> 0.8.1)
-      hashie (>= 1.2)
-      multi_json (~> 1.4)
-      nokogiri (~> 1.5.2)
-      oauth2
-    hashie (3.2.0)
-    highline (1.6.21)
-    httparty (0.10.2)
-      multi_json (~> 1.0)
+    activesupport (8.1.4)
+      base64
+      bigdecimal
+      concurrent-ruby (~> 1.0, >= 1.3.1)
+      connection_pool (>= 2.2.5)
+      drb
+      i18n (>= 1.6, < 2)
+      json
+      logger (>= 1.4.2)
+      minitest (>= 5.1)
+      securerandom (>= 0.3)
+      tzinfo (~> 2.0, >= 2.0.5)
+      uri (>= 0.13.1)
+    addressable (2.9.0)
+      public_suffix (>= 2.0.2, < 8.0)
+    base64 (0.3.0)
+    bigdecimal (4.1.3)
+    concurrent-ruby (1.3.8)
+    connection_pool (3.0.2)
+    csv (3.3.6)
+    daemons (1.4.1)
+    drb (2.2.3)
+    foreman (0.90.0)
+      thor (~> 1.4)
+    git (5.6.0)
+      activesupport (>= 5.0)
+      addressable (~> 2.8)
+      process_executer (~> 4.1)
+      rchardet (~> 1.9)
+    httparty (0.24.2)
+      csv
+      mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
-    i18n (0.6.1)
-    jeweler (1.8.8)
-      builder
-      bundler (~> 1.0)
-      git (>= 1.2.5)
-      github_api (= 0.10.1)
-      highline (>= 1.6.15)
-      nokogiri (= 1.5.10)
-      rake
-      rdoc
-    json (1.8.1)
-    jwt (1.0.0)
-    keen (0.4.4)
-      multi_json (~> 1.0)
-    macaddr (1.6.1)
-      systemu (~> 2.5.0)
-    metaclass (0.0.1)
-    mocha (0.10.5)
-      metaclass (~> 0.0.1)
-    multi_json (1.6.1)
-    multi_xml (0.5.3)
-    multipart-post (1.2.0)
-    nokogiri (1.5.10)
-    oauth2 (1.0.0)
-      faraday (>= 0.8, < 0.10)
-      jwt (~> 1.0)
-      multi_json (~> 1.3)
-      multi_xml (~> 0.5)
-      rack (~> 1.2)
-    rack (1.5.2)
-    rake (10.3.2)
-    rdoc (4.1.1)
-      json (~> 1.4)
-    shoulda (3.3.2)
-      shoulda-context (~> 1.0.1)
-      shoulda-matchers (~> 1.4.1)
-    shoulda-context (1.0.2)
-    shoulda-matchers (1.4.2)
-      activesupport (>= 3.0.0)
-      bourne (~> 1.1.2)
-    simplecov (0.9.0)
-      docile (~> 1.1.0)
-      multi_json
-      simplecov-html (~> 0.8.0)
-    simplecov-html (0.8.0)
-    systemu (2.5.2)
-    thor (0.17.0)
+    i18n (1.15.2)
+      concurrent-ruby (~> 1.0)
+    json (3.0.2)
+    keen (1.1.1)
+      addressable (~> 2.5)
+      multi_json (~> 1.12)
+    logger (1.7.0)
+    macaddr (1.7.2)
+      systemu (~> 2.6.5)
+    mini_mime (1.1.5)
+    minitest (6.0.6)
+      drb (~> 2.0)
+      prism (~> 1.5)
+    multi_json (1.21.2)
+    multi_xml (0.9.1)
+      bigdecimal (>= 3.1, < 5)
+    power_assert (3.1.0)
+    prism (1.9.0)
+    process_executer (4.1.1)
+      track_open_instances (~> 0.1)
+    public_suffix (7.0.5)
+    rake (13.4.2)
+    rchardet (1.10.2)
+    securerandom (0.4.1)
+    shoulda (4.0.0)
+      shoulda-context (~> 2.0)
+      shoulda-matchers (~> 4.0)
+    shoulda-context (2.0.0)
+    shoulda-matchers (4.5.1)
+      activesupport (>= 4.2.0)
+    systemu (2.6.5)
+    test-unit (3.7.8)
+      power_assert
+    thor (1.5.0)
+    track_open_instances (0.1.15)
+    tzinfo (2.0.6)
+      concurrent-ruby (~> 1.0)
+    uri (1.1.1)
 
 PLATFORMS
+  arm64-darwin-25
   ruby
 
 DEPENDENCIES
-  bundler (~> 1.6.2)
+  bundler (>= 2.2.33)
   daemons
   foreman
-  httparty
-  jeweler (~> 1.8.4)
+  git (>= 1.11.0)
+  httparty (>= 0.21.0)
   keen
   macaddr
+  rake (>= 12.3.3)
   shoulda
-  simplecov
+  test-unit (~> 3.7)
+
+CHECKSUMS
+  activesupport (8.1.4) sha256=891dd3fe43c4fc8391934b237b1189bb1f661c932a84a840043db9d46a4e80df
+  addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
+  base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
+  bigdecimal (4.1.3) sha256=61ebe1e5e559bdc3cc6f2c0ee7f427321fc838f59611c294356eb04d6e21cf66
+  concurrent-ruby (1.3.8) sha256=b2f1be836e968ccc78ccfce277ea79c72a88633f22306782c16ff23fb415d1e1
+  connection_pool (3.0.2) sha256=33fff5ba71a12d2aa26cb72b1db8bba2a1a01823559fb01d29eb74c286e62e0a
+  csv (3.3.6) sha256=aba61e7e507a66f03d45cb1f3c4b6359861c3504038b422962875dce099e4456
+  daemons (1.4.1) sha256=8fc76d76faec669feb5e455d72f35bd4c46dc6735e28c420afb822fac1fa9a1d
+  drb (2.2.3) sha256=0b00d6fdb50995fe4a45dea13663493c841112e4068656854646f418fda13373
+  foreman (0.90.0) sha256=ff675e2d47b607ac58714a6d4ac3e1ee8f06f41d8db084531c31961e2c3f117c
+  git (5.6.0) sha256=f10227e352b12804ae6c1947b520f6fb027261c5952e93dafcb08ba7cad65363
+  httparty (0.24.2) sha256=8fca6a54aa0c4aa4303a0fd33e5e2156175d6a5334f714263b458abd7fda9c38
+  i18n (1.15.2) sha256=00f9eb62412fe593b2a65a97daa75300d37abb8f7202ec748e94b6d46a9dd1b5
+  json (3.0.2) sha256=8e6d7e7b11384c21230430cef90b71f14849a34a1f4452796670f7c981bd19df
+  keen (1.1.1) sha256=aa3e624a5b2d48340c13b9b04a49fa9bee58aa55d125c04528cfb9c3a420690f
+  logger (1.7.0) sha256=196edec7cc44b66cfb40f9755ce11b392f21f7967696af15d274dde7edff0203
+  macaddr (1.7.2) sha256=da377809968bbc1160bf02a999e916bb3255000007291d9d1a49a93ceedadf82
+  mini_mime (1.1.5) sha256=8681b7e2e4215f2a159f9400b5816d85e9d8c6c6b491e96a12797e798f8bccef
+  minitest (6.0.6) sha256=153ea36d1d987a62942382b61075745042a2b3123b1cd48f4c3675af9cc7d6f1
+  multi_json (1.21.2) sha256=245531eaf54bdba57aba515ff08b4503505c5e09911daa89c5a561e2f85bea8e
+  multi_xml (0.9.1) sha256=7ce766b59c17241ed62976caeae1fae9b2431b263398c35396239a68c4a64e57
+  power_assert (3.1.0) sha256=fefe98ed5d3140628138f3f9f9194d6ece01f1320e69700d3c928adca7518251
+  prism (1.9.0) sha256=7b530c6a9f92c24300014919c9dcbc055bf4cdf51ec30aed099b06cd6674ef85
+  process_executer (4.1.1) sha256=02e93624eb984c94282a892084781d8343d39198b983a25753c862c228f1786e
+  public_suffix (7.0.5) sha256=1a8bb08f1bbea19228d3bed6e5ed908d1cb4f7c2726d18bd9cadf60bc676f623
+  rake (13.4.2) sha256=cb825b2bd5f1f8e91ca37bddb4b9aaf345551b4731da62949be002fa89283701
+  rchardet (1.10.2) sha256=e041cb195f464dc10e49ab130f78c8b5956cd9a4f4f6df84e0c183b87c135f33
+  securerandom (0.4.1) sha256=cc5193d414a4341b6e225f0cb4446aceca8e50d5e1888743fac16987638ea0b1
+  shoulda (4.0.0) sha256=e677218c432eaa102a173e7047fbcf396ebc8ccea467725ba4e6053bc9e09c0a
+  shoulda-context (2.0.0) sha256=7adf45342cd800f507d2a053658cb1cce2884b616b26004d39684b912ea32c34
+  shoulda-matchers (4.5.1) sha256=8d06e2bbb5b22aa170333905fcf23b7388d1baa9485895b0a2b80210e97f27e2
+  systemu (2.6.5) sha256=01f7d014b1453b28e5781e15c4d7d63fc9221c29b174b7aae5253207a75ab33e
+  test-unit (3.7.8) sha256=689d1ca53f4d46f678b4e5d68d8e4294f87fc5e8b9238cc4de7c5727e8d65943
+  thor (1.5.0) sha256=e3a9e55fe857e44859ce104a84675ab6e8cd59c650a49106a05f55f136425e73
+  track_open_instances (0.1.15) sha256=7f0e48821e6b4c881daaa40fb1583e308937c22a9c84883c150b399c3b5c3029
+  tzinfo (2.0.6) sha256=8daf828cc77bcf7d63b0e3bdb6caa47e2272dcfaf4fbfe46f8c3a9df087a829b
+  uri (1.1.1) sha256=379fa58d27ffb1387eaada68c749d1426738bd0f654d812fcc07e7568f5c57c6
+
+BUNDLED WITH
+  4.0.3
