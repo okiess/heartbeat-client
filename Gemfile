@@ -6,6 +6,11 @@ gem 'foreman'
 gem 'macaddr'
 gem 'keen'
 
+# Pin transitive dependency to the patched release to fix
+# CVE-2026-126080 (DoS in safe_constantize) and CVE-2026-126075 (XSS in
+# MessagePack serializer); fixed in activesupport 8.1.4.1.
+gem 'activesupport', '~> 8.1.4.1'
+
 group :development do
   gem "shoulda", ">= 0"
   gem "bundler", ">= 2.2.33"
